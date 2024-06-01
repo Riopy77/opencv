@@ -48,13 +48,13 @@ def sort_contours(cnts, method="left-to-right"):
     if method == "top-to-bottom" or method == "bottom-to-top":
         i = 1
 
-    # 计算外接矩形 boundingBoxes是一个元组
-    boundingBoxes = [cv2.boundingRect(c) for c in cnts]  # 用一个最小的矩形，把找到的形状包起来x,y,h,w
-    # sorted排序
+    
+    boundingBoxes = [cv2.boundingRect(c) for c in cnts]  
+   
     (cnts, boundingBoxes) = zip(*sorted(zip(cnts, boundingBoxes),
                                         key=lambda b: b[1][i], reverse=reverse))
 
-    return cnts, boundingBoxes  # 轮廓和boundingBoxess
+    return cnts, boundingBoxes 
 
 ttttu = cv2.imread("card.png")
 
@@ -77,7 +77,7 @@ thresh1 = cv2.morphologyEx(thresh, cv2.MORPH_CLOSE, np.ones((5, 8), np.uint8))
 
 thresh = cv2.morphologyEx(thresh1, cv2.MORPH_CLOSE, np.ones((14, 25), np.uint8))
 
-# 计算轮廓
+
 threshCnts, his = cv2.findContours(thresh.copy(), cv2.RETR_LIST, cv2.CHAIN_APPROX_NONE)
 cnts = threshCnts
 cur_img = ttttu.copy()
@@ -92,7 +92,6 @@ for i in range(n):
 locs = []
 
 for (i, c) in enumerate(cnts):
-    # 计算矩形
     (x, y, w, h) = cv2.boundingRect(c)
     if (80 < w < 100) and (25 < h < 35):
             locs.append((x, y, w, h))
@@ -103,12 +102,12 @@ print(locs)
 output = []
 for (i, (gx, gy, gw, gh)) in enumerate(locs):
     groupOutput = []
-    group = hui1[gy - 4:gy + gh + 4, gx - 4:gx + gw + 4]  # 获取轮廓及其周围数据,加五减五的作用是将获取到的坐标位上下左右偏移一点，方便匹配
+    group = hui1[gy - 4:gy + gh + 4, gx - 4:gx + gw + 4]  
     cv_show('group', group)
     group = cv2.threshold(group, 0, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)[1]
     cv_show('group_' + str(i), group)
     digitCnts = cv2.findContours(group.copy(), cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)[0]
-    # 排序
+
     digitCnts = imutils.contours.sort_contours(digitCnts, "left-to-right")[0]
 
     for c in digitCnts:
